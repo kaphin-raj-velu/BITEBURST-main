@@ -1,0 +1,39 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.list-group-item.active {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #000;
+    font-weight: bold;
+}
+
+.cart-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    background-color: #fff;
+}
+
+.cart-item img {
+    height: 60px;
+    width: 60px;
+    border-radius: 8px;
+    margin-right: 10px;
+}
+
+.cart-item .btn {
+    font-size: 0.8rem;
+    padding: 3px 8px;
+}
+
+h2 {
+    color: #343a40;
+}
+

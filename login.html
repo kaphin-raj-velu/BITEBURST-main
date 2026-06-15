@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Login - BiteBurst</title>
+    <link rel="stylesheet" href="auth.css">
+    <style>
+        /* Centering forgot password and signup links */
+        .auth-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .forgot {
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        .forgot a {
+            color: #ff6b6b;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot a:hover {
+            text-decoration: underline;
+        }
+
+        .redirect-text {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .redirect-text a {
+            color: #ff6b6b;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .redirect-text a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+
+    <div class="auth-card">
+        <h2>Welcome to Bite Burst</h2>
+        <form id="loginForm">
+            <div class="input-group">
+                <input type="text" id="loginUsername" required placeholder=" ">
+                <label for="loginUsername">Username</label>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="loginPassword" required placeholder=" ">
+                <label for="loginPassword">Password</label>
+                <span class="toggle-password" onclick="togglePassword('loginPassword')">👁️</span>
+            </div>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <!-- Centered forgot password link -->
+        <p class="forgot">
+            <a href="forgot-password.html">Forgot password?</a>
+        </p>
+
+        <!-- Centered signup link -->
+        <p class="redirect-text">
+            Don't have an account? <a href="signup.html">Sign Up</a>
+        </p>
+    </div>
+
+    <script src="auth.js"></script>
+
+    
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Orders - BiteBurst</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+body { background-color: #f8f9fa; padding-top: 70px; font-family:'Poppins',sans-serif; }
+.order-card { border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); margin-bottom:20px; padding:15px; background-color:#fff; }
+.order-header { display:flex; justify-content:space-between; font-weight:600; margin-bottom:10px; }
+.order-items { list-style:none; padding-left:0; }
+.order-items li { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.order-items li img { width:60px; height:60px; border-radius:8px; margin-right:10px; }
+.item-details { display:flex; flex-direction:column; }
+.item-details span.restaurant { font-size:0.8rem; color:#6c757d; }
+.repeat-btn, .remove-btn { margin-top:10px; margin-right:5px; }
+.navbar-nav .nav-link { font-weight:500; color:#fff; transition:0.3s; }
+.navbar-nav .nav-link:hover { color:#ffc107; }
+
+/* Chatbot styling */
+#voice-chatbot { position:fixed; bottom:20px; right:20px; width:250px; background:#ffc107; color:black; border-radius:10px; padding:15px; box-shadow:0 4px 15px rgba(0,0,0,0.3); z-index:999; }
+#chatbot-header { font-weight:bold; text-align:center; margin-bottom:10px; }
+#chatbot-log { max-height:150px; overflow-y:auto; font-size:0.9rem; margin-bottom:10px; }
+#chatbot-status { font-size:0.8rem; text-align:center; color:#333; }
+#mic-btn { background:#343a40; color:white; border:none; padding:6px 12px; border-radius:5px; cursor:pointer; width:100%; }
+#mic-btn:hover { background:#495057; }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top px-3">
+<a class="navbar-brand fw-bold" href="index.html">🍔 BiteBurst</a>
+<ul class="navbar-nav ms-auto">
+<li class="nav-item"><a class="nav-link" href="menu.html">Menu</a></li>
+<li class="nav-item"><a class="nav-link" href="cart.html">Cart (<span id="cart-count">0</span>)</a></li>
+<li class="nav-item"><a class="nav-link" href="checkout.html">Checkout</a></li>
+</ul>
+</nav>
+
+<div class="container my-4">
+<h2 class="mb-4">Your Orders</h2>
+<div id="ordersContainer"></div>
+</div>
+
+<!-- Voice Chatbot -->
+<div id="voice-chatbot">
+    <div id="chatbot-header">🤖 BiteBot</div>
+    <div id="chatbot-log">Click "Start Voice Input" to interact.</div>
+    <div id="chatbot-status">Idle...</div>
+    <button id="mic-btn">🎤 Start Voice Input</button>
+</div>
+
+<script>
+const cartCountEl = document.getElementById("cart-count");
+const ordersContainer = document.getElementById("ordersContainer");
+const logEl = document.getElementById("chatbot-log");
+const statusEl = document.getElementById("chatbot-status");
+const micBtn = document.getElementById("mic-btn");
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+cartCountEl.innerText = cart.reduce((sum,i)=>sum+(i.quantity||1),0);
+
+// Ensure all orders have unique IDs
+let orders = JSON.parse(localStorage.getItem("orders")) || [];
+orders.forEach(o=>{ if(!o.id) o.id=Date.now()+Math.floor(Math.random()*1000); });
+localStorage.setItem("orders", JSON.stringify(orders));
+
+function logMessage(msg,isBot=true){ logEl.innerHTML += `<br>${isBot?'🤖':'🗣️'} ${msg}`; logEl.scrollTop = logEl.scrollHeight; }
+function speak(text,callback=null){ const u=new SpeechSynthesisUtterance(text); u.lang='en-US'; u.onend=()=>callback&&callback(); window.speechSynthesis.speak(u); logMessage(text,true); }
+
+// Render orders
+function renderOrders(){
+    ordersContainer.innerHTML="";
+    if(orders.length===0){ ordersContainer.innerHTML="<p class='text-muted'>You have no orders yet.</p>"; return; }
+    orders.forEach((order,index)=>{
+        let itemsHTML="";
+        order.items.forEach(item=>{
+            itemsHTML+=`<li>
+            <img src="${item.image}" alt="${item.item}">
+            <div class="item-details">
+            <span class="restaurant">${item.restaurant}</span>
+            <span>${item.item} (${item.quantity||1})</span>
+            </div>
+            <span>₹${parseInt(item.price.replace(/[^\d]/g,""))*(item.quantity||1)}</span>
+            </li>`;
+        });
+        const totalAmount=order.items.reduce((sum,item)=>sum+parseInt(item.price.replace(/[^\d]/g,""))*(item.quantity||1),0);
+        const orderCard=document.createElement("div");
+        orderCard.className="order-card";
+        orderCard.innerHTML=`
+        <div class="order-header">
+            <span>Order ID: ${order.id}</span>
+            <span>Date: ${order.date}</span>
+        </div>
+        <ul class="order-items">${itemsHTML}</ul>
+        <div class="order-header">
+            <span>Total:</span>
+            <span>₹${totalAmount}</span>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-sm btn-primary repeat-btn">Repeat Order</button>
+            <button class="btn btn-sm btn-danger remove-btn">Remove Order</button>
+        </div>
+        `;
+        orderCard.querySelector(".repeat-btn").addEventListener("click",()=>{
+            let currentCart=JSON.parse(localStorage.getItem("cart"))||[];
+            order.items.forEach(item=>{
+                const existing=currentCart.find(i=>i.item===item.item && i.restaurant===item.restaurant);
+                if(existing) existing.quantity=(existing.quantity||1)+(item.quantity||1);
+                else currentCart.push({...item});
+            });
+            localStorage.setItem("cart",JSON.stringify(currentCart));
+            alert("Order added to cart!");
+            cartCountEl.innerText=currentCart.reduce((sum,i)=>sum+(i.quantity||1),0);
+        });
+        orderCard.querySelector(".remove-btn").addEventListener("click",()=>{
+            if(confirm("Are you sure you want to remove this order?")){
+                orders.splice(index,1);
+                localStorage.setItem("orders",JSON.stringify(orders));
+                renderOrders();
+                alert("Order removed successfully!");
+            }
+        });
+        ordersContainer.appendChild(orderCard);
+    });
+}
+renderOrders();
+
+// ===== Voice Bot Logic =====
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+const recognition=new SpeechRecognition();
+recognition.continuous=false; recognition.interimResults=false; recognition.lang='en-US';
+let botActive=false;
+
+function getVoiceInput(promptText){
+    return new Promise(resolve=>{
+        speak(promptText,()=>recognition.start());
+        recognition.onresult=(event)=>{
+            recognition.stop();
+            const text=event.results[0][0].transcript.trim().toLowerCase();
+            resolve(text);
+        };
+        recognition.onerror=()=>{ recognition.stop(); resolve(""); };
+    });
+}
+
+async function voiceWorkflow(){
+    botActive=true;
+    statusEl.textContent="Listening...";
+    speak("You are on the Orders page. Commands: Repeat Order [ID], Remove Order [ID], Go to Menu, Cart, Checkout, or Home.");
+    while(botActive){
+        let command=await getVoiceInput("Awaiting your command.");
+        if(command.includes("menu")){ speak("Redirecting to Menu."); window.location.href="menu.html"; break; }
+        else if(command.includes("cart")){ speak("Redirecting to Cart."); window.location.href="cart.html"; break; }
+        else if(command.includes("checkout")){ speak("Redirecting to Checkout."); window.location.href="checkout.html"; break; }
+        else if(command.includes("home")){ speak("Redirecting to Home."); window.location.href="index.html"; break; }
+        else if(command.includes("repeat order")){
+            const words=command.split(" "); const id=parseInt(words[words.length-1]);
+            const order=orders.find(o=>o.id===id);
+            if(order){
+                let currentCart=JSON.parse(localStorage.getItem("cart"))||[];
+                order.items.forEach(item=>{
+                    const existing=currentCart.find(i=>i.item===item.item && i.restaurant===item.restaurant);
+                    if(existing) existing.quantity=(existing.quantity||1)+(item.quantity||1);
+                    else currentCart.push({...item});
+                });
+                localStorage.setItem("cart",JSON.stringify(currentCart));
+                cartCountEl.innerText=currentCart.reduce((sum,i)=>sum+(i.quantity||1),0);
+                speak(`Order ${id} repeated and added to cart.`);
+            } else speak(`Order ID ${id} not found.`);
+        }
+        else if(command.includes("remove order")){
+            const words=command.split(" "); const id=parseInt(words[words.length-1]);
+            const index=orders.findIndex(o=>o.id===id);
+            if(index!==-1){ orders.splice(index,1); localStorage.setItem("orders",JSON.stringify(orders)); renderOrders(); speak(`Order ${id} removed.`); }
+            else speak(`Order ID ${id} not found.`);
+        }
+        else speak("Command not recognized. Say Repeat Order, Remove Order, or Go to Menu, Cart, Checkout, or Home.");
+    }
+}
+
+micBtn.addEventListener("click",()=>{ if(!botActive) voiceWorkflow(); });
+</script>
+
+</body>
+</html>

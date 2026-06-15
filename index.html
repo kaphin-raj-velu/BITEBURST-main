@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BiteBurst - Home</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+body { margin:0; background: rgba(0,0,0,0.35); }
+.hero { position:relative; background:url("img/2.jpg") no-repeat center center/cover; color:white; height:100vh; display:flex; justify-content:center; align-items:center; text-align:center; cursor:pointer;}
+.hero::before { content:""; position:absolute; inset:0; background: rgba(0,0,0,0.35); z-index:0;}
+.hero-content { position:relative; z-index:1;}
+.hero h1 { font-size:3rem; margin-bottom:0.5rem;}
+.hero p { font-size:1.3rem; margin-bottom:1.5rem; color:#ffd700;}
+.hero .btn { padding:12px 30px; font-size:1.3rem; background:#ffc107; color:black; border:none; font-weight:bold; border-radius:5px; cursor:pointer; }
+.hero .btn:hover { background:#ffca2c; }
+.feature-card { background:white; border-radius:0.5rem; transition: transform 0.3s, box-shadow 0.3s; }
+.feature-card:hover { transform:translateY(-10px); box-shadow:0 10px 25px rgba(0,0,0,0.2);}
+footer { background:#343a40; color:white; text-align:center; padding:20px 0;}
+#logoutBtn { font-weight:600; margin-left:15px; }
+#voice-chatbot { position: fixed; bottom: 20px; right: 20px; width: 250px; background: #ffc107; color:black; border-radius: 10px; padding: 15px; box-shadow:0 4px 15px rgba(0,0,0,0.3);}
+#chatbot-header { font-weight:bold; text-align:center; margin-bottom:10px;}
+#chatbot-log { max-height:150px; overflow-y:auto; font-size:0.9rem; margin-bottom:10px;}
+#chatbot-status { font-size:0.8rem; text-align:center; color:#333;}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-dark bg-dark fixed-top px-3">
+<a class="navbar-brand fw-bold nav-link" href="index.html">🍔 BiteBurst</a>
+<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+<span class="navbar-toggler-icon"></span></button>
+<div class="offcanvas offcanvas-end bg-dark text-white" tabindex="-1" id="offcanvasNavbar">
+<div class="offcanvas-header"><h5 class="offcanvas-title">🍔 BiteBurst</h5>
+<button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button></div>
+<div class="offcanvas-body">
+<ul class="navbar-nav ms-auto align-items-start">
+<li class="nav-item"><a class="nav-link text-white" href="menu.html">Menu</a></li>
+<li class="nav-item"><a class="nav-link text-white" href="cart.html">Cart (<span id="cart-count">0</span>)</a></li>
+<li class="nav-item"><a class="nav-link text-white" href="orders.html">Orders (<span id="order-count">0</span>)</a></li>
+<li class="nav-item"><a class="nav-link text-white" href="dashboard.html">Dashboard</a></li>
+<li class="nav-item"><a class="nav-link text-white" href="feedback.html">Feedback</a></li>
+<li class="nav-item mt-2"><button id="logoutBtn" class="btn btn-warning btn-sm">Logout</button></li>
+</ul>
+</div>
+</div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+<div class="hero-content">
+<h1>Welcome to BiteBurst</h1>
+<p>Smart Voice Food Ordering. Accessible, Fast & Fun.</p>
+<a href="menu.html" class="btn btn-lg" id="start-ordering">🍕 Start Ordering</a>
+</div>
+</section>
+
+<!-- Features Section -->
+<section class="container py-5">
+<div class="text-center mb-5">
+<h2 class="fw-bold">Why BiteBurst?</h2>
+<p class="text-muted">Making food ordering easier for everyone.</p>
+</div>
+<div class="row g-4">
+<div class="col-md-4"><div class="card feature-card p-3 text-center shadow-sm"><div class="card-body"><h5 class="card-title">🎤 Voice Ordering</h5><p class="card-text">Order your favorite meals by just speaking. No clicks needed!</p></div></div></div>
+<div class="col-md-4"><div class="card feature-card p-3 text-center shadow-sm"><div class="card-body"><h5 class="card-title">📊 Smart Dashboard</h5><p class="card-text">Track orders, see trends, and understand user needs instantly.</p></div></div></div>
+<div class="col-md-4"><div class="card feature-card p-3 text-center shadow-sm"><div class="card-body"><h5 class="card-title">⚡ Fast & Accessible</h5><p class="card-text">Optimized for speed, accessibility, and mobile-first experience.</p></div></div></div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer><p class="mb-0">© 2025 BiteBurst. Built for Innovation 🚀</p></footer>
+
+<!-- Voice Chatbot -->
+<div id="voice-chatbot">
+<div id="chatbot-header">🤖 BiteBot</div>
+<div id="chatbot-log">Voice assistant inactive. Click hero section (not Start Ordering) to start.</div>
+<div id="chatbot-status">Idle...</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Authentication
+const username = sessionStorage.getItem("userLoggedIn");
+if(!username) window.location.href="login.html";
+document.getElementById("logoutBtn").addEventListener("click",()=>{
+    stopBot(); 
+    sessionStorage.removeItem("userLoggedIn"); 
+    window.location.href="login.html";
+});
+function updateCartCount(){ 
+    const cart=JSON.parse(localStorage.getItem("cart"))||[]; 
+    document.getElementById("cart-count").innerText = cart.reduce((s,i)=>(s+(i.quantity||1)),0);
+}
+function updateOrderCount(){ 
+    const orders=JSON.parse(localStorage.getItem("orders"))||[]; 
+    document.getElementById("order-count").innerText = orders.length;
+}
+updateCartCount(); updateOrderCount();
+window.addEventListener("storage",()=>{ updateCartCount(); updateOrderCount(); });
+
+// ===== Voice Bot Logic =====
+const logEl = document.getElementById("chatbot-log");
+const statusEl = document.getElementById("chatbot-status");
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
+recognition.continuous = true;
+recognition.interimResults = false;
+recognition.lang = 'en-US';
+let botActive = false;
+
+// Log & speak
+function logMessage(msg,isBot=true){ 
+    logEl.innerHTML += `<br>${isBot?'🤖':'🗣️'} ${msg}`;
+    logEl.scrollTop = logEl.scrollHeight;
+}
+function speak(text, callback=null){
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'en-US';
+    utter.onend = ()=>{ if(callback) callback(); };
+    window.speechSynthesis.speak(utter);
+    logMessage(text,true);
+}
+
+// Start & Stop Bot
+function startBot(){
+    if(!botActive){
+        botActive = true;
+        statusEl.textContent="Listening...";
+        speak("You are on the Home Page of BiteBurst. Try commands like go to Menu, Food, Orders, Dashboard, Feedback, Logout, or About.", promptUser);
+    }
+}
+function stopBot(){
+    recognition.stop();
+    statusEl.textContent="Stopped.";
+    speak("Voice recognition stopped.");
+    botActive=false;
+}
+
+// Read Home Page (Concise summary)
+function readHomePage(){ 
+    speak("BiteBurst is a smart voice-based food ordering platform. Key features are: Voice Ordering, Smart Dashboard, and Fast, Accessible Experience.", promptUser);
+}
+
+// Recognition results
+recognition.onresult = (event)=>{
+    const transcript = event.results[event.results.length-1][0].transcript.trim().toLowerCase();
+    logMessage(transcript,false);
+    if(botActive){
+        handleCommand(transcript);
+    }
+}
+recognition.onerror = (e)=>{ statusEl.textContent="Error: "+e.error; }
+
+// Handle commands
+function handleCommand(command){
+    if(command.includes("menu")) { speak("Redirecting to Menu."); window.location.href="menu.html"; }
+    else if(command.includes("food") || command.includes("cart")) { speak("Opening Food section."); window.location.href="cart.html"; }
+    else if(command.includes("orders")) { speak("Opening your Orders."); window.location.href="orders.html"; }
+    else if(command.includes("dashboard")) { speak("Opening Dashboard."); window.location.href="dashboard.html"; }
+    else if(command.includes("feedback")) { speak("Opening Feedback."); window.location.href="feedback.html"; }
+    else if(command.includes("logout")) { stopBot(); sessionStorage.removeItem("userLoggedIn"); window.location.href="login.html"; }
+    else if(command.includes("stop")) { stopBot(); }
+    else if(command.includes("about")) { readHomePage(); } 
+    else { speak("Command not recognized. Say go to Menu, Food, Orders, Dashboard, Feedback, Logout, or About."); }
+
+    if(botActive && !command.includes("stop") && !command.includes("about")) setTimeout(promptUser,500);
+}
+
+// Prompt user
+function promptUser(){ 
+    if(!botActive) return; 
+    speak("Awaiting your command.", ()=>{ recognition.start(); }); 
+}
+
+// Activate bot on hero click only (not Start Ordering button)
+document.querySelector(".hero").addEventListener("click", function(e){
+    if(e.target.id !== "start-ordering" && !botActive){
+        startBot();
+    }
+});
+</script>
+</body>
+</html>

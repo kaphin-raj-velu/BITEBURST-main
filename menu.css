@@ -1,0 +1,67 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.restaurant-card {
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin-bottom: 20px;
+}
+
+.restaurant-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.restaurant-card img {
+    height: 150px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 0.5rem;
+}
+
+.menu-item {
+    margin-bottom: 15px;
+}
+
+.menu-item img {
+    height: 80px;
+    width: 80px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    margin-right: 15px;
+}
+
+.menu-item-name {
+    font-weight: 600;
+}
+
+.search-bar {
+    margin: 30px 0 20px 0;
+}
+
+.menu-section {
+    margin-top: 30px;
+}
+
+.btn-add-cart {
+    background-color: #ffc107;
+    border: none;
+    color: #000;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn-add-cart:hover {
+    background-color: #ffca2c;
+    transform: scale(1.05);
+}
+
+.d-flex-align-center {
+    display: flex;
+    align-items: center;
+}

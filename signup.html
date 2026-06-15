@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Signup - BiteBurst</title>
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+    <div class="background"></div>
+
+    <div class="auth-card">
+        <h2>Sign Up</h2>
+        <form id="signupForm">
+            <div class="input-group">
+                <input type="text" id="signupUsername" required placeholder=" ">
+                <label for="signupUsername">Username</label>
+            </div>
+
+            <div class="input-group">
+                <input type="email" id="signupEmail" required placeholder=" ">
+                <label for="signupEmail">Email</label>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="signupPassword" required placeholder=" ">
+                <label for="signupPassword">Password</label>
+                <span class="toggle-password" onclick="togglePassword('signupPassword')">👁️</span>
+            </div>
+
+            <button type="submit">Sign Up</button>
+        </form>
+
+        <!-- Feedback message will appear here -->
+        <p id="signupMsg" style="margin-top:10px; font-weight:500;"></p>
+
+        <p class="redirect-text">Already have an account? <a href="login.html">Login</a></p>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>

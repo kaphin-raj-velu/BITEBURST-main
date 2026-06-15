@@ -1,0 +1,150 @@
+/* Interactive animated background */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(135deg, #ffc107, #ff6b6b, #6a11cb, #2575fc);
+    background-size: 400% 400%;
+    animation: gradientMove 15s ease infinite;
+    z-index: -1;
+}
+
+/* Gradient animation */
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Card styling */
+.login-card {
+    width: 350px;
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    z-index: 1;
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Input groups with floating labels */
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    font-size: 0.95rem;
+    background: transparent;
+    transition: 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 8px #ffc107;
+}
+
+.input-group label {
+    position: absolute;
+    top: 12px;
+    left: 15px;
+    color: #6c757d;
+    font-size: 0.95rem;
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+/* Floating label effect */
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+    top: -8px;
+    left: 12px;
+    font-size: 0.8rem;
+    color: #ff6b6b;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 0 5px;
+}
+
+/* Toggle password icon */
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Login button */
+.login-card button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background-color: #ff6b6b;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-card button:hover {
+    background-color: #e55a5a;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+}
+
+/* Title styling */
+.login-card h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 700;
+    color: #343a40;
+}
+
+/* Links */
+.login-card a {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.85rem;
+    color: #6c757d;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.login-card a:hover {
+    color: #ff6b6b;
+}
+
+/* Responsive */
+@media (max-width: 400px) {
+    .login-card {
+        width: 90%;
+        padding: 1.5rem;
+    }
+}

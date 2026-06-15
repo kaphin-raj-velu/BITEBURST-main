@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login - BiteBurst</title>
+    <link rel="stylesheet" href="admin-login.css">
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="background"></div>
+
+    <div class="login-card">
+        <h2>Admin Login</h2>
+        <form id="adminLoginForm">
+            <div class="input-group">
+                <input type="text" id="username" required placeholder=" ">
+                <label for="username">Username</label>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="password" required placeholder=" ">
+                <label for="password">Password</label>
+                <span class="toggle-password" onclick="togglePassword()">👁️</span>
+            </div>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <!-- Home Button -->
+        <button onclick="window.location.href='index.html'" class="home-btn">🏠 Go to Home</button>
+
+        <a href="#">Forgot password?</a>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById("password");
+            passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+        }
+
+        // Handle login
+        document.getElementById("adminLoginForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            // Dummy validation (replace with real one later)
+            if(username === "admin" && password === "admin123") {
+                sessionStorage.setItem("adminLoggedIn", "true"); 
+                alert("Login successful! Redirecting...");
+                window.location.href = "dashboard.html"; 
+            } else {
+                alert("Invalid username or password!");
+            }
+        });
+    </script>
+</body>
+</html>
